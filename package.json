@@ -1,0 +1,29 @@
+{
+  "name": "reminder-service",
+  "version": "1.0.0",
+  "description": "Notification service for reminders",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adisakshya/notification-service.git"
+  },
+  "keywords": [
+    "notifications",
+    "reminders",
+    "fcm",
+    "redis"
+  ],
+  "author": "Adisakshya Chauhan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adisakshya/notification-service/issues"
+  },
+  "homepage": "https://github.com/adisakshya/notification-service#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
