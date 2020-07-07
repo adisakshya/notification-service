@@ -24,11 +24,13 @@ export class DeviceService {
         
         // Use device-repo to check if a device with this fcmToken already exists
         let userDevices = await this.deviceRepo.findDeviceByUserId(userId);
-        userDevices.forEach((device) => {
-            if(device.fcmToken === fcmToken) {
-                throw Boom.badData("Device already registered", {reason: "DEVICE_ALREADY_REGISTERED"});
-            }
-        });
+        if(userDevices) {
+            userDevices.forEach((device) => {
+                if(device.fcmToken === fcmToken) {
+                    throw Boom.badData("Device already registered", {reason: "DEVICE_ALREADY_REGISTERED"});
+                }
+            });
+        }
 
         // Use device-repo to create new device for the user
         const createdDevice = await this.deviceRepo.create(userId, fcmToken, userDevices);

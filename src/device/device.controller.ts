@@ -37,7 +37,7 @@ export class DeviceController {
         description: "Register new device for a user"
     })
     @Post("register/:fcmToken")
-    public registerDevice(@WriteHeader() header: WriteHeaders, @Param("fcmTokem") fcmToken: string): Promise<CreateEntityResponse> {
+    public registerDevice(@WriteHeader() header: WriteHeaders, @Param("fcmToken") fcmToken: string): Promise<CreateEntityResponse> {
         return this.deviceService.create(header.userId, fcmToken);
     }
 
