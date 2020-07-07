@@ -3,17 +3,23 @@ import {
     Delete,
     Get,
     Post,
-    UseInterceptors
+    Param,
+    Query
 } from '@nestjs/common';
-import {ApiOperation, ApiTags,} from "@nestjs/swagger";
+import {ApiOperation, ApiTags} from "@nestjs/swagger";
 import { error } from "console";
+import {ReadHeader, WriteHeader} from "@common/decorator";
+import { ReadHeaders, PagingResponse, PagingQuery, WriteHeaders, CreateEntityResponse } from '@common/dto';
+import {ApiCommonHeader} from "@common/swagger";
+import { DeviceService } from './device.service';
+import { AllDevicesResponse } from './device.dto';
 
+@ApiCommonHeader()
 @ApiTags("Devices")
 @Controller('device')
 export class DeviceController {
 
-    constructor() {
-    }
+    constructor(private readonly deviceService: DeviceService) {}
 
     @ApiOperation({
         summary: "Fetch all devices",
@@ -21,8 +27,8 @@ export class DeviceController {
         description: "Fetch all devices for the user"
     })
     @Get()
-    public async getDevices(): Promise<any> {
-        throw error('Not implemented yet');
+    public async getDevices(@ReadHeader() header: ReadHeaders): Promise<AllDevicesResponse> {
+        return await this.deviceService.findAll(header.userId); 
     }
 
     @ApiOperation({
@@ -30,9 +36,9 @@ export class DeviceController {
         operationId: "device:register",
         description: "Register new device for a user"
     })
-    @Post("register/:id")
-    public registerDevice(): Promise<any> {
-        throw error('Not implemented yet');
+    @Post("register/:fcmToken")
+    public registerDevice(@WriteHeader() header: WriteHeaders, @Param("fcmTokem") fcmToken: string): Promise<CreateEntityResponse> {
+        return this.deviceService.create(header.userId, fcmToken);
     }
 
     @ApiOperation({
@@ -48,7 +54,7 @@ export class DeviceController {
     @ApiOperation({
         summary: "Deregister a device",
         operationId: "device:deregister",
-        description: "Dergister an existing device for a user"
+        description: "Deregister an existing device for a user"
     })
     @Delete("remove/:id")
     public async delete(): Promise<any> {

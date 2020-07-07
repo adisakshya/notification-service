@@ -20,12 +20,15 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@hapi/boom": "^9.1.0",
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/swagger": "^4.5.12",
     "aws-sdk": "^2.710.0",
+    "class-transformer": "^0.2.3",
+    "class-validator": "^0.12.2",
     "nanoid": "^3.1.10",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

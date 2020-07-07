@@ -13,7 +13,13 @@ import {Logger} from "@nestjs/common";
             provide: DeviceRepo,
             inject: [Logger, ApiConfigService],
             useFactory: (logger: Logger, config: ApiConfigService) => new DeviceRepo(
-                new AWS.DynamoDB.DocumentClient({region: "us-east-1"}),
+                new AWS.DynamoDB.DocumentClient({
+                    "apiVersion": "2012-08-10",
+                    "accessKeyId": "adisakshyaAccessKey",
+                    "secretAccessKey": "adisakshyaSecretKey",
+                    "region":"us-east-1",
+                    "endpoint": "http://192.168.99.100:8000"
+                }),
                 logger,
                 config.userDeviceTable,
             ),
