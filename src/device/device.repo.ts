@@ -67,29 +67,30 @@ export class DeviceRepo {
      */
     async update(params: UserDevice) {
         // Generate timestamp for device registration time
-        const timestamp = Date.now();
-        const dynamoItemKV = {
-            userId: `USER|${params.userId}`
-        };
-        // Create item object
-        const device = {
-            userId: `USER|${params.userId}`,
-            deviceIds: params.devices,
-            updatedAt: timestamp
-        };
-        this.logger.debug(device);
-        // Update list of user devices
-        return this.dynamoDB.update({
-            TableName: this.table,
-            Key: {
-                'userId': params.userId
-            },
-            UpdateExpression: "set deviceIds = :devices",
-            ExpressionAttributeValues:{
-                ":devices": params.devices
-            },
-            ReturnValues:"UPDATED_NEW"
-        }).promise().then(() => device);
+        // const timestamp = Date.now();
+        // const dynamoItemKV = {
+        //     userId: `USER|${params.userId}`
+        // };
+        // // Create item object
+        // const device = {
+        //     userId: `USER|${params.userId}`,
+        //     deviceIds: params.devices,
+        //     updatedAt: timestamp
+        // };
+        // this.logger.debug(device);
+        // // Update list of user devices
+        // return this.dynamoDB.update({
+        //     TableName: this.table,
+        //     Key: {
+        //         'userId': params.userId
+        //     },
+        //     UpdateExpression: "set deviceIds = :devices",
+        //     ExpressionAttributeValues:{
+        //         ":devices": params.devices
+        //     },
+        //     ReturnValues:"UPDATED_NEW"
+        // }).promise().then(() => device);
+        return null;
     }
 
     /**
