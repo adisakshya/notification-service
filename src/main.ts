@@ -1,9 +1,11 @@
+import { BoomExceptionFilter } from "@common/expection-filter";
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function configure() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalFilters(app.get(BoomExceptionFilter));
   const options = new DocumentBuilder()
     .setTitle('Notification Service')
     .setDescription('Internal API documentation for Notification Service')
