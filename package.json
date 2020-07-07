@@ -22,8 +22,5 @@
   "bugs": {
     "url": "https://github.com/adisakshya/notification-service/issues"
   },
-  "homepage": "https://github.com/adisakshya/notification-service#readme",
-  "dependencies": {
-    "express": "^4.17.1"
-  }
+  "homepage": "https://github.com/adisakshya/notification-service#readme"
 }
