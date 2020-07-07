@@ -1,6 +1,6 @@
-import {Injectable, Logger} from "@nestjs/common";
-import {PagingQuery, CreateEntityResponse} from "@common/dto";
-import { Device, AllDevicesResponse } from "./device.dto";
+import { Injectable, Logger } from "@nestjs/common";
+import { CreateEntityResponse } from "@common/dto";
+import { AllDevicesResponse } from "./device.dto";
 import { DeviceRepo } from "./device.repo";
 import { customAlphabet } from "nanoid";
 import { plainToClass } from "class-transformer";
@@ -21,6 +21,10 @@ export class DeviceService {
      */
     public async create(userId: string, fcmToken: string): Promise<CreateEntityResponse> {
         this.logger.log(`Registering device for user ${userId}`);
+
+        /**
+         * ToDo Verify FCM Token
+         */
         
         // Check if a device with this fcmToken already exists
         let userDevices = await this.deviceRepo.findDeviceByUserId(userId);
@@ -51,7 +55,12 @@ export class DeviceService {
      */
     public async delete(userId: string, fcmToken: string): Promise<void> {
         this.logger.log(`Deassociating deivce for user ${userId}`);
-        // Get all devices that remain associated with the user
+        
+        /**
+         * ToDo Verify FCM Token
+         */
+        
+         // Get all devices that remain associated with the user
         let userDevices = await this.deviceRepo.findDeviceByUserId(userId);
         if(!userDevices) {
             throw Boom.badData('No devices avaible', { reason: 'NO_DEVICES_AVAILABLE' });
