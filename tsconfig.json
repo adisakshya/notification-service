@@ -13,6 +13,9 @@
     "paths": {
       "@common/*": [
         "src/common/*"
+      ],
+      "@device/*": [
+        "src/device/*"
       ]
     }
   },
