@@ -33,11 +33,12 @@ export class DeviceRepo {
      */
     async create(userId: string, fcmToken: string, userDevices: Device[]) {
         // Create device object with new device included
+        const timestamp = new Date().toISOString();
         const deviceId = this.generateID()
         const newUserDevice: Device = {
             deviceId: deviceId,
             fcmToken: fcmToken,
-            createdAt: new Date().toISOString()
+            createdAt: timestamp
         };
         
         // If user already has some devices registered then
@@ -53,7 +54,8 @@ export class DeviceRepo {
         };
         // Item object
         const devicesItem = {
-            devices: userDevices || [newUserDevice]
+            devices: userDevices || [newUserDevice],
+            updatedAt: timestamp
         }
         // Create new entry for the user
         return this.dynamoDB.put({
@@ -63,40 +65,21 @@ export class DeviceRepo {
     }
 
     /**
-     * Update the device for a user
+     * Update the list of associated devices for a user
      */
-    async update(params: UserDevice) {
-        // Generate timestamp for device registration time
-        // const timestamp = Date.now();
-        // const dynamoItemKV = {
-        //     userId: `USER|${params.userId}`
-        // };
-        // // Create item object
-        // const device = {
-        //     userId: `USER|${params.userId}`,
-        //     deviceIds: params.devices,
-        //     updatedAt: timestamp
-        // };
-        // this.logger.debug(device);
-        // // Update list of user devices
-        // return this.dynamoDB.update({
-        //     TableName: this.table,
-        //     Key: {
-        //         'userId': params.userId
-        //     },
-        //     UpdateExpression: "set deviceIds = :devices",
-        //     ExpressionAttributeValues:{
-        //         ":devices": params.devices
-        //     },
-        //     ReturnValues:"UPDATED_NEW"
-        // }).promise().then(() => device);
-        return null;
-    }
-
-    /**
-     * Delete the device for a user
-     */
-    async delete() {
-        return null;
+    async update(userId: string, updatedDeviceList: Device[]) {
+        // Update list of user devices
+        return this.dynamoDB.update({
+            TableName: this.table,
+            Key: {
+                'userId': userId
+            },
+            UpdateExpression: "set devices = :devices, updatedAt = :updatedAt",
+            ExpressionAttributeValues:{
+                ":devices": updatedDeviceList,
+                ":updatedAt": new Date().toISOString()
+            },
+            ReturnValues:"UPDATED_NEW"
+        }).promise().then(() => true);
     }
 }

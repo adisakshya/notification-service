@@ -56,9 +56,9 @@ export class DeviceController {
         operationId: "device:deregister",
         description: "Deregister an existing device for a user"
     })
-    @Delete("remove/:id")
-    public async delete(): Promise<any> {
-        throw error('Not implemented yet');
+    @Delete("remove/:fcmToken")
+    public async delete(@WriteHeader() header: WriteHeaders, @Param("fcmToken") fcmToken: string): Promise<void> {
+        await this.deviceService.delete(header.userId, fcmToken);
     }
 }
 
