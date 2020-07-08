@@ -16,6 +16,9 @@
       ],
       "@device/*": [
         "src/device/*"
+      ],
+      "@notification/*": [
+        "src/notification/*"
       ]
     }
   },
