@@ -5,16 +5,16 @@ import { DeviceRepo } from "./device.repo";
 import { customAlphabet } from "nanoid";
 import { plainToClass } from "class-transformer";
 import Boom = require("@hapi/boom");
+import { FireBase } from "@common/firebase/firebase";
 
 /**
  * Service managing all the functionalities related to devices
  */
 @Injectable()
-export class DeviceService {
-    private readonly generateID = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 22);
-    
+export class DeviceService {    
     constructor(private readonly deviceRepo: DeviceRepo,
-                private readonly logger: Logger) {}
+                private readonly logger: Logger,
+                private readonly _firebase: FireBase) {}
 
     /**
      * Creates a new deivce for a user
@@ -25,6 +25,11 @@ export class DeviceService {
         /**
          * ToDo Verify FCM Token
          */
+        const verificationStatus = await this._firebase.verifyToken(fcmToken);
+        this.logger.debug(verificationStatus);
+        if(!verificationStatus) {
+            throw Boom.badData("Invalid FCM token", {reason: "INVALID_TOKEN"});
+        }
         
         // Check if a device with this fcmToken already exists
         let userDevices = await this.deviceRepo.findDeviceByUserId(userId);
@@ -59,6 +64,10 @@ export class DeviceService {
         /**
          * ToDo Verify FCM Token
          */
+        const verificationStatus = await this._firebase.verifyToken(fcmToken);
+        if(!verificationStatus) {
+            throw Boom.badData("Invalid FCM token", {reason: "INVALID_TOKEN"});
+        }
         
          // Get all devices that remain associated with the user
         let userDevices = await this.deviceRepo.findDeviceByUserId(userId);

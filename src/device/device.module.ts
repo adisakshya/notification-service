@@ -6,6 +6,7 @@ import {DeviceService} from "@device/device.service";
 import * as AWS from "aws-sdk";
 import {DeviceRepo} from "@device/device.repo";
 import {Logger} from "@nestjs/common";
+import {FireBase} from "@common/firebase/firebase";
 
 @Module({
     providers: [
@@ -24,6 +25,7 @@ import {Logger} from "@nestjs/common";
                 config.userDeviceTable,
             ),
         },
+        FireBase,
         DeviceService
     ],
     controllers: [DeviceController],
