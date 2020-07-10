@@ -12,7 +12,7 @@ export class NotificationProcessor {
     this._firebase.configure();
   }
 
-  @Process('create')
+  @Process('REMINDER_CREATE')
   async handleCreate(job: Job) {
     // Get userId
     const userId = job.data.userId;
@@ -23,20 +23,17 @@ export class NotificationProcessor {
       return device.fcmToken;
     });
     // Send notification
-    const notification = await this.handleNotification(fcmtokens);
-    this.logger.debug(notification);
+    const notification = await this.handleNotification(fcmtokens, job.data.notificationData);
     this.logger.debug(`Sent notification to user ${userId}`);
   }
 
-  async handleNotification(fcmTokens: string[]): Promise<any> {
-      const data = {
-        "notification": {
-          "title": "FCM Notification Title",
-          "body": "This is FCM Message body...",
-          "icon": "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png",
-        }
-      }
-      return await this._firebase.sendNotification(fcmTokens, data);
+  /**
+   * Handle sending notifications to users
+   */
+  async handleNotification(fcmTokens: string[], notificationData: Object): Promise<any> {
+      return await this._firebase.sendNotification(fcmTokens, {
+        "notification": notificationData
+      });
   }
 
 }

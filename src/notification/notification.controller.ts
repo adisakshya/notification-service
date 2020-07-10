@@ -10,28 +10,33 @@ export class NotificationController {
   private readonly logger: Logger = new Logger();
   constructor(@InjectQueue('notification') private readonly notificationQueue: Queue) {}
 
-  @EventPattern('create')
+  @EventPattern('REMINDER_CREATE')
   async create(@Payload() reminder: any) {
     this.logger.debug(`Creating notification for user ${reminder.userId}`);
     
     // Set delay time
     const delay = new Date(reminder.date).getTime() - new Date().getTime();
-    
+
     // Set payload
     const payload = {
       id: reminder.id,
-      userId: reminder.userId
+      userId: reminder.userId,
+      notificationData: {
+        body: reminder.string,
+        title: 'Reminder Title',
+        icon: 'https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png'
+      }
     }
     
     // Schedule notification
-    const job = await this.notificationQueue.add('create', payload, { delay: delay });
+    const job = await this.notificationQueue.add('REMINDER_CREATE', payload, { delay: delay });
     // Set reminder-id and job-id in map
     this.reminderJobMap.set(reminder.id, job.id);
 
     this.logger.debug(`Created notification for user ${reminder.userId}`);
   }
 
-  @EventPattern('delete')
+  @EventPattern('REMINDER_DELETE')
   async delete(@Payload() reminder: any) {
     this.logger.debug(`Deleting notification for user ${reminder.userId}`);
     
