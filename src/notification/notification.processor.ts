@@ -16,15 +16,16 @@ export class NotificationProcessor {
   async handleCreate(job: Job) {
     // Get userId
     const userId = job.data.userId;
-    this.logger.debug(`Creating notification for user ${userId}`);
-    // Fetch FCM tokens
+    this.logger.debug(`Sending notification to user ${userId}`);
+    // Fetch FCM tokens for the user
     const userDevices = await this.deviceService.findAll(userId);
     const fcmtokens = userDevices.devices.map((device) => {
       return device.fcmToken;
     });
+    // Send notification
     const notification = await this.handleNotification(fcmtokens);
     this.logger.debug(notification);
-    this.logger.debug(`Created notification for user ${userId}`);
+    this.logger.debug(`Sent notification to user ${userId}`);
   }
 
   async handleNotification(fcmTokens: string[]): Promise<any> {

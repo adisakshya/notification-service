@@ -21,7 +21,7 @@ async function configure() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
   await app.startAllMicroservicesAsync();
-  await app.listen(3001);
+  await app.listen(3000);
 }
 
 configure();
