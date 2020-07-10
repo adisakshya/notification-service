@@ -2,6 +2,8 @@ import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { NotificationController } from './notification.controller';
 import { NotificationProcessor } from './notification.processor';
+import { FireBase } from '@common/firebase/firebase';
+import { DeviceModule } from '@device/device.module'
 
 @Module({
   imports: [
@@ -11,9 +13,10 @@ import { NotificationProcessor } from './notification.processor';
         host: '192.168.99.100',
         port: 6379,
       },
-  }),
+    }),
+    DeviceModule
   ],
   controllers: [NotificationController],
-  providers: [NotificationProcessor],
+  providers: [NotificationProcessor, FireBase],
 })
 export class NotificationModule {}

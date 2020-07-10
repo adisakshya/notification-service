@@ -40,4 +40,17 @@ export class FireBase {
             return false;
         });
     }
+
+    /**
+     * Send notification 
+     */
+    async sendNotification(tokens: string[], notification: any): Promise<any> {
+        const message = { ...notification };
+        const msg = messaging().sendToDevice(tokens, message)
+            .then((response) => {
+                console.log('Response', response)
+                return response;
+            })
+        return msg;
+    }
 }
