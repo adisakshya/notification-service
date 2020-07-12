@@ -23,8 +23,8 @@ export class NotificationController {
       userId: reminder.userId,
       notificationData: {
         body: reminder.string,
-        title: 'Reminder Title',
-        icon: 'https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png'
+        title: 'Reminder to view article',
+        icon: 'https://img.icons8.com/windows/96/2266EE/alarm-clock.png'
       }
     }
     
