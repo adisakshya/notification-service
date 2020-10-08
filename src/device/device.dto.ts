@@ -1,14 +1,39 @@
-import { ApiProperty } from '@nestjs/swagger';
+import {ApiProperty} from "@nestjs/swagger";
+import {IsIn, IsNotEmpty, IsString} from "class-validator";
 
-export class Device {
-    deviceId: string;
+export class RegisterDevice {
+    @ApiProperty({
+        description: "FCM token for the device that is to be registered",
+        required: true
+    })
+    @IsString()
+    @IsNotEmpty()
     fcmToken: string;
-    createdAt: string;
+
+    @ApiProperty({
+        enum: ["web", "android"],
+        description: "Type of device, that needs to be registered",
+        required: true
+    })
+    @IsIn(["web", "android"])
+    @IsNotEmpty()
+    type: "web" | "android";
+
+    @ApiProperty({
+        description: "Name of device",
+        required: true
+    })
+    @IsString()
+    @IsNotEmpty()
+    name: string;
 }
 
-export interface UserDevice {
-    userId: string;
-    devices: Array<Device>
+export class Device {
+    id: string;
+    fcmToken: string;
+    type: string;
+    name: string;
+    createdAt: string;
 }
 
 export class AllDevicesResponse {

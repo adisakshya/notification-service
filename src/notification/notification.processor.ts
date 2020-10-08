@@ -18,7 +18,7 @@ export class NotificationProcessor {
     const userId = job.data.userId;
     this.logger.debug(`Sending notification to user ${userId}`);
     // Fetch FCM tokens for the user
-    const userDevices = await this.deviceService.findAll(userId);
+    const userDevices = await this.deviceService.findAllDevices(userId);
     const fcmtokens = userDevices.devices.map((device) => {
       return device.fcmToken;
     });

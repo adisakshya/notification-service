@@ -1,18 +1,17 @@
 import {
+    Body,
     Controller,
     Delete,
     Get,
     Post,
-    Param,
-    Query
+    Param
 } from '@nestjs/common';
 import {ApiOperation, ApiTags} from "@nestjs/swagger";
-import { error } from "console";
 import {ReadHeader, WriteHeader} from "@common/decorator";
-import { ReadHeaders, PagingResponse, PagingQuery, WriteHeaders, CreateEntityResponse } from '@common/dto';
+import {ReadHeaders, WriteHeaders, CreateEntityResponse} from '@common/dto';
 import {ApiCommonHeader} from "@common/swagger";
-import { DeviceService } from './device.service';
-import { AllDevicesResponse } from './device.dto';
+import {DeviceService} from './device.service';
+import {AllDevicesResponse, RegisterDevice} from './device.dto';
 
 @ApiCommonHeader()
 @ApiTags("Devices")
@@ -27,8 +26,8 @@ export class DeviceController {
         description: "Fetch all devices for the user"
     })
     @Get()
-    public async getDevices(@ReadHeader() header: ReadHeaders): Promise<AllDevicesResponse> {
-        return await this.deviceService.findAll(header.userId); 
+    public async getAllDevices(@ReadHeader() header: ReadHeaders): Promise<AllDevicesResponse> {
+        return await this.deviceService.findAllDevices(header.userId); 
     }
 
     @ApiOperation({
@@ -36,19 +35,9 @@ export class DeviceController {
         operationId: "device:register",
         description: "Register new device for a user"
     })
-    @Post("register/:fcmToken")
-    public registerDevice(@WriteHeader() header: WriteHeaders, @Param("fcmToken") fcmToken: string): Promise<CreateEntityResponse> {
-        return this.deviceService.create(header.userId, fcmToken);
-    }
-
-    @ApiOperation({
-        summary: "Update device ID",
-        operationId: "device:update",
-        description: "Update the device ID for a user"
-    })
-    @Post("update")
-    public updateDevice(): Promise<any> {
-        throw error('Not implemented yet');
+    @Post("register")
+    public registerDevice(@WriteHeader() header: WriteHeaders, @Body() device: RegisterDevice): Promise<CreateEntityResponse> {
+        return this.deviceService.createDevice(header.userId, device);
     }
 
     @ApiOperation({
@@ -56,9 +45,9 @@ export class DeviceController {
         operationId: "device:deregister",
         description: "Deregister an existing device for a user"
     })
-    @Delete("remove/:fcmToken")
-    public async delete(@WriteHeader() header: WriteHeaders, @Param("fcmToken") fcmToken: string): Promise<void> {
-        await this.deviceService.delete(header.userId, fcmToken);
+    @Delete("remove/:id")
+    public async deleteDevice(@WriteHeader() header: WriteHeaders, @Param("id") id: string): Promise<void> {
+        await this.deviceService.deleteDevice(header.userId, id);
     }
 }
 
