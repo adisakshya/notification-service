@@ -1,52 +1,78 @@
-import { InjectQueue } from '@nestjs/bull';
-import { Controller, Post } from '@nestjs/common';
-import { Queue } from 'bull';
-import { Logger } from '@nestjs/common';
-import { EventPattern, Payload, Ctx, RedisContext } from '@nestjs/microservices';
+import {Controller} from '@nestjs/common';
+import {Logger} from '@nestjs/common';
+import {Reminder} from "./notification.dto";
+import {Consumer} from 'sqs-consumer';
+import {NotificationService} from "@notification/notification.service";
 
 @Controller('notification')
 export class NotificationController {
-  private reminderJobMap = new Map<string, string | number>();
-  private readonly logger: Logger = new Logger();
-  constructor(@InjectQueue('notification') private readonly notificationQueue: Queue) {}
+    private readonly logger = new Logger("Notification");
+    private readonly app = Consumer.create({
+        queueUrl: process.env.NOTIFICATION_QUEUE_URL,
+        handleMessage: async (message) => {
+            await this.handleReminderEvent(message);
+        }
+    })
+    .on('error', (err) => {
+        this.logger.error(err);
+    })
+    .on('processing_error', (err) => {
+        this.logger.error(err);
+    })
+    .on('timeout_error', (err) => {
+        this.logger.error(err);
+    });
 
-  @EventPattern('REMINDER_CREATE')
-  async create(@Payload() reminder: any) {
-    this.logger.debug(`Creating notification for user ${reminder.userId}`);
-    
-    // Set delay time
-    const delay = new Date(reminder.date).getTime() - new Date().getTime();
-
-    // Set payload
-    const payload = {
-      id: reminder.id,
-      userId: reminder.userId,
-      notificationData: {
-        body: reminder.string,
-        title: 'Reminder to view article',
-        icon: 'https://img.icons8.com/windows/96/2266EE/alarm-clock.png'
-      }
+    constructor(private readonly notificationService: NotificationService ) {
+        this.app.start();
+        this.logger.log(`SQS Consumer Running: ${this.app.isRunning}`);
     }
-    
-    // Schedule notification
-    const job = await this.notificationQueue.add('REMINDER_CREATE', payload, { delay: delay });
-    // Set reminder-id and job-id in map
-    this.reminderJobMap.set(reminder.id, job.id);
 
-    this.logger.debug(`Created notification for user ${reminder.userId}`);
-  }
+    private async handleReminderEvent(message) {
+        this.logger.debug('Received reminder event');
+        const eventData = JSON.parse(message.Body);
+        if (!eventData?.MessageAttributes?.eventType) {
+            // Error
+            return;
+        }
+        switch (eventData.MessageAttributes.eventType.Value) {
+            case 'reminder:created':
+                await this.create(JSON.parse(eventData.Message));
+                break;
+            default:
+                this.logger.error('Unknown event-type');
+        }
+    }
 
-  @EventPattern('REMINDER_DELETE')
-  async delete(@Payload() reminder: any) {
-    this.logger.debug(`Deleting notification for user ${reminder.userId}`);
-    
-    // Check if notification processing job for the given reminder exists
-    const notificationJob = this.notificationQueue.getJob(this.reminderJobMap.get(reminder.id));
-    (await notificationJob).remove()
-    
-    // Clear reminder-id and job-id in map
-    this.reminderJobMap.delete(reminder.id);
-
-    this.logger.debug(`Deleted notification for user ${reminder.userId}`);
-  }
+    async create(reminder: Reminder) {
+        this.logger.debug(`Creating notification for user ${reminder.userId}`);
+        const pushPayload = {
+            notification: {
+                title: 'Reminder',
+                body: reminder.message,
+                icon: 'https://img.icons8.com/windows/96/2266EE/alarm-clock.png',
+                click_action: reminder.url.toString()
+            },
+            data: {
+                type: 'REMINDER_NOTIFICATION',
+                args: JSON.stringify({
+                    userId: reminder.userId,
+                    url: reminder.url
+                })
+            }
+        };
+        const emailPayload = {
+            email: reminder.userEmail,
+            subject: 'Reminder',
+            body: reminder
+        };
+        switch (reminder.notifyType) {
+            case 'push':
+                await this.notificationService.processPushNotification(reminder.userId, pushPayload);
+                break;
+            case 'email':
+                await this.notificationService.processEmailNotification(reminder.userId, emailPayload);
+                break;
+        }
+    }
 }

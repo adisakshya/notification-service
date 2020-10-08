@@ -6,12 +6,6 @@ import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 
 async function configure() {
   const app = await NestFactory.create(AppModule);
-  const microservice = app.connectMicroservice({
-    transport: Transport.REDIS,
-    options: {
-        url: 'http://192.168.99.100:6379',
-    },
-  });
   app.useGlobalFilters(app.get(BoomExceptionFilter));
   const options = new DocumentBuilder()
         .setTitle('Notification Service')

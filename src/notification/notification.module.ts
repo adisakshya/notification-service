@@ -1,22 +1,13 @@
-import { BullModule } from '@nestjs/bull';
-import { Module } from '@nestjs/common';
-import { NotificationController } from './notification.controller';
-import { NotificationProcessor } from './notification.processor';
-import { FireBase } from '@common/firebase/firebase';
-import { DeviceModule } from '@device/device.module'
+import {Module} from '@nestjs/common';
+import {NotificationController} from './notification.controller';
+import {NotificationService} from './notification.service';
+import {DeviceModule} from '@device/device.module'
+import {CommonModule} from "@common/common.module";
 
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'notification',
-      redis: {
-        host: '192.168.99.100',
-        port: 6379,
-      },
-    }),
-    DeviceModule
-  ],
-  controllers: [NotificationController],
-  providers: [NotificationProcessor, FireBase],
+    imports: [DeviceModule, CommonModule],
+    controllers: [NotificationController],
+    providers: [NotificationService],
 })
-export class NotificationModule {}
+export class NotificationModule {
+}

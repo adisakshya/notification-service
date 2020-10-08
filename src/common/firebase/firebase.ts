@@ -1,56 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { credential, initializeApp, messaging } from 'firebase-admin';
-import { messagingConfiguration }from './firebase-config';
-import { ProjectConfiguration } from './firebase.type';
-import { Boolean } from 'aws-sdk/clients/apigateway';
+import {Injectable, Logger} from '@nestjs/common';
+import * as admin from 'firebase-admin';
+import App = admin.app.App;
 
 @Injectable()
 export class FireBase {
+    private readonly logger = new Logger("Firebase");
     /**
-     * Get all defined projects
+     * Stringified Firebase config
      */
-    private projects(): Array<ProjectConfiguration> {
-        return messagingConfiguration.projects as ProjectConfiguration[];
+    private readonly projectsConfig = process.env.FCM_PROJECT_CONFIG;
+    private readonly app: App;
+
+    constructor() {
+        const serviceAccount = JSON.parse(this.projectsConfig);
+        this.app = admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        }, "app");
     }
 
-    /**
-     * Configure firebase-admin
-     */
-    configure(): void {
-        const data = this.projects().forEach(project => {
-            // Initialize application
-            const ref = initializeApp({
-                credential: credential.cert(project.serviceAccount),
-                databaseURL: project.databaseURL,
-            });
-        });
+    async verifyToken(fcmToken: string): Promise<boolean> {
+        this.logger.log("Verifying token");
+        return await this.app.messaging().send({token: fcmToken}, true)
+            .then(() => true)
+            .catch(() => false);
     }
 
-    /**
-     * Verify FCM-Token
-     */
-    async verifyToken(fcmToken: string): Promise<Boolean> {
-        return await messaging().send({
-            token: fcmToken
-        }, true)
-        .then(() => {
-            return true;
-        })
-        .catch(() => {
-            return false;
-        });
+    async sendPushNotification(tokens: string[], notification: any): Promise<admin.messaging.MessagingDevicesResponse> {
+        this.logger.log("Sending notification")
+        const message = {...notification};
+        return this.app.messaging().sendToDevice(tokens, message);
     }
 
-    /**
-     * Send notification 
-     */
-    async sendNotification(tokens: string[], notification: any): Promise<any> {
-        const message = { ...notification };
-        const msg = messaging().sendToDevice(tokens, message)
-            .then((response) => {
-                console.log('Response', response)
-                return response;
-            })
-        return msg;
-    }
 }
