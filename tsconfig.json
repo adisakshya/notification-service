@@ -19,6 +19,9 @@
       ],
       "@notification/*": [
         "src/notification/*"
+      ],
+      "@entity/*": [
+        "src/database/entity/*"
       ]
     }
   },

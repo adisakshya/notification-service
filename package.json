@@ -1,5 +1,5 @@
 {
-  "name": "reminder-service",
+  "name": "notification-service",
   "version": "1.0.0",
   "description": "Notification service for reminders",
   "author": "Adisakshya Chauhan",
@@ -17,7 +17,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migration:create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:create -n ",
+    "migration:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate -n ",
+    "migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
@@ -28,17 +32,20 @@
     "@nestjs/microservices": "^7.3.2",
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/swagger": "^4.5.12",
+    "@nestjs/typeorm": "^7.1.4",
     "aws-sdk": "^2.710.0",
     "bull": "^3.15.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "firebase-admin": "^8.13.0",
     "nanoid": "^3.1.10",
+    "pg": "^8.4.0",
     "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
-    "swagger-ui-express": "^4.1.4"
+    "swagger-ui-express": "^4.1.4",
+    "typeorm": "^0.2.28"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
