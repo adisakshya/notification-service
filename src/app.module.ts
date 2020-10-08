@@ -17,7 +17,7 @@ import {Device} from "@entity/device.entity";
                 host: config.dbHost,
                 entities: [Device],
                 logging: !config.isProduction,
-                synchronize: true,
+                synchronize: false,
             }),
             imports: [CommonModule],
             inject: [ApiConfigService]
