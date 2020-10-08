@@ -14,9 +14,9 @@ async function configure() {
   });
   app.useGlobalFilters(app.get(BoomExceptionFilter));
   const options = new DocumentBuilder()
-        .setTitle('Bookmark Service')
-        .setDescription('Internal API documentation for Bookmark Service')
-        .setVersion('1.0')
+        .setTitle('Notification Service')
+        .setDescription('Internal API documentation for Notification Service')
+        .setVersion('1.0.0')
         .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
