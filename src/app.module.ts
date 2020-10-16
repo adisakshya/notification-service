@@ -22,7 +22,8 @@ import {Device} from "@entity/device.entity";
             imports: [CommonModule],
             inject: [ApiConfigService]
         }),
-        NotificationModule, DeviceModule
+        DeviceModule,
+        NotificationModule
     ]
 })
 export class AppModule {

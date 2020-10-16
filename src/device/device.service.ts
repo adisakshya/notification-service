@@ -11,8 +11,7 @@ import { FireBase } from "@common/firebase/firebase";
 export class DeviceService {
     private readonly generateID = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 22);
     constructor(private readonly logger: Logger,
-                private readonly firebase: FireBase) {
-    }
+                private readonly firebase: FireBase) {}
 
     public async createDevice(userId: string, device: RegisterDevice): Promise<CreateEntityResponse> {
         this.logger.log(`Registering device for user ${userId}`);

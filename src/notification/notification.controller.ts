@@ -6,7 +6,7 @@ import {NotificationService} from "@notification/notification.service";
 
 @Controller('notification')
 export class NotificationController {
-    private readonly logger = new Logger("Notification");
+    private readonly logger = new Logger("Notification Controller");
     private readonly app = Consumer.create({
         queueUrl: process.env.NOTIFICATION_QUEUE_URL,
         handleMessage: async (message) => {
@@ -23,13 +23,13 @@ export class NotificationController {
         this.logger.error(err);
     });
 
-    constructor(private readonly notificationService: NotificationService ) {
+    constructor(private readonly notificationService: NotificationService) {
         this.app.start();
         this.logger.log(`SQS Consumer Running: ${this.app.isRunning}`);
     }
 
-    private async handleReminderEvent(message) {
-        this.logger.debug('Received reminder event');
+    private async handleReminderEvent(message): Promise<void> {
+        this.logger.log('Received reminder event');
         const eventData = JSON.parse(message.Body);
         if (!eventData?.MessageAttributes?.eventType) {
             // Error
@@ -44,8 +44,8 @@ export class NotificationController {
         }
     }
 
-    async create(reminder: Reminder) {
-        this.logger.debug(`Creating notification for user ${reminder.userId}`);
+    async create(reminder: Reminder): Promise<void> {
+        this.logger.log(`Sending notification for user ${reminder.userId}`);
         const pushPayload = {
             notification: {
                 title: 'Reminder',
@@ -73,6 +73,9 @@ export class NotificationController {
             case 'email':
                 await this.notificationService.processEmailNotification(reminder.userId, emailPayload);
                 break;
+            default:
+                this.logger.error('Unkown notification-type');
         }
+        this.logger.log(`Sent notification to user ${reminder.userId}`);
     }
 }

@@ -1,7 +1,6 @@
 import {BoomExceptionFilter} from "@common/expection-filter";
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
-import {Transport} from "@nestjs/microservices";
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 
 async function configure() {

@@ -1,13 +1,16 @@
 import {Module} from '@nestjs/common';
+import {CommonModule} from "@common/common.module";
+import {DeviceModule} from '@device/device.module'
 import {NotificationController} from './notification.controller';
 import {NotificationService} from './notification.service';
-import {DeviceModule} from '@device/device.module'
-import {CommonModule} from "@common/common.module";
 
 @Module({
-    imports: [DeviceModule, CommonModule],
+    imports: [
+        DeviceModule,
+        CommonModule
+    ],
     controllers: [NotificationController],
-    providers: [NotificationService],
+    providers: [NotificationService]
 })
 export class NotificationModule {
 }

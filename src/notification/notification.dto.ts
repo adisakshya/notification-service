@@ -12,7 +12,6 @@ export class Reminder {
 export class Tokens {
     web: string[];
     android: string[];
-    ios: string[];
 }
 
 export class PushNotificationData {

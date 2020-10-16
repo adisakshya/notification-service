@@ -1,11 +1,10 @@
 import {CommonModule} from "@common/common.module";
 import {Module} from '@nestjs/common';
-import {DeviceController} from "@device/device.controller";
-import {DeviceService} from "@device/device.service";
-import {FireBase} from "@common/firebase/firebase";
+import {DeviceController} from "./device.controller";
+import {DeviceService} from "./device.service";
 
 @Module({
-    providers: [FireBase, DeviceService],
+    providers: [DeviceService],
     controllers: [DeviceController],
     imports: [CommonModule],
     exports: [DeviceService]
