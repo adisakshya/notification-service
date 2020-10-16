@@ -13,8 +13,7 @@ async function configure() {
         .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
-  await app.startAllMicroservicesAsync();
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 
 configure();
