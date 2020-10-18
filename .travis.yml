@@ -6,16 +6,21 @@ services:
 
 env:
   global:
-    - IMAGE_NAME=continuous-improvement/event-service
+    - IMAGE_NAME=notification-service
 
 stages:
   - build
-  - docker-build
   - test
+  - name: deploy-dev
+    if: branch = development AND type = push AND fork = false
+  - name: deploy-prod
+    if: branch = production AND type = push AND fork = false
 
 before_script:
   # Move to source directory
   - cd src
+  # Versioning
+  - VERSION="$(awk '$2 == "NOTIFICATION_SERVICE_VERSION" { print $3; exit }' Dockerfile)"
 
 jobs:
   include:
@@ -25,18 +30,34 @@ jobs:
         - yarn install
         # Build source
         - yarn build
-    - stage: docker-build
-      script:
-        # Build docker image
-        - docker build -t $IMAGE_NAME .
-        # List docker images
-        - docker images
     - stage: test
       script:
         # Install dependencies
         - yarn install
         # Run tests
         - yarn test --passWithNoTests
+    - stage: deploy-dev
+      script:
+        # Build docker image
+        - docker build -t $IMAGE_NAME .
+        # List docker images
+        - docker images
+        # Push dev-docker image to dockerhub
+        - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+        - docker tag $IMAGE_NAME:latest $DOCKER_USER/$IMAGE_NAME:$VERSION-dev
+        - docker push $DOCKER_USER/$IMAGE_NAME:$VERSION-dev
+    - stage: deploy-prod
+      script:
+        # Build docker image
+        - docker build -t $IMAGE_NAME .
+        # List docker images
+        - docker images
+        # Push prod-docker image to dockerhub
+        - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+        - docker tag $IMAGE_NAME:latest $DOCKER_USER/$IMAGE_NAME:$VERSION-prod
+        - docker tag $IMAGE_NAME:latest $DOCKER_USER/$IMAGE_NAME:latest
+        - docker push $DOCKER_USER/$IMAGE_NAME:latest
+        - docker push $DOCKER_USER/$IMAGE_NAME:$VERSION-prod
 
 notifications:
   email: false

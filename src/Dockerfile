@@ -16,6 +16,8 @@ RUN yarn build
 
 # Second stage
 FROM node:12-alpine3.10
+# Version
+ENV NOTIFICATION_SERVICE_VERSION 1.0.0
 # Production Environment
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
