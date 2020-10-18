@@ -1,0 +1,49 @@
+language: node_js
+node_js: 
+  - "12"
+services:
+  - docker
+
+env:
+  global:
+    - IMAGE_NAME=continuous-improvement/event-service
+
+stages:
+  - build
+  - docker-build
+  - test
+
+before_script:
+  # Move to source directory
+  - cd src
+
+jobs:
+  include:
+    - stage: build
+      script:
+        # Install dependencies
+        - yarn install
+        # Build source
+        - yarn build
+    - stage: docker-build
+      script:
+        # Build docker image
+        - docker build -t $IMAGE_NAME .
+        # List docker images
+        - docker images
+    - stage: test
+      script:
+        # Install dependencies
+        - yarn install
+        # Run tests
+        - yarn test --passWithNoTests
+
+notifications:
+  email: false
+  slack:
+    rooms:
+      secure: MK4Og2E2CHnEX0uyLoHhNiMBVeNpXwXayp5yt8Z9Ylywd5C5i+IBs0OASNUQmLvwPgZNDdipEnEqweb/L2eawZflA4pD3uogugDQSb/lLAiIFNTgkmqNve9rE3m8s8ADfMSPcp52GgfsGYwAPzmrp1bpTTNKB3Ov6pHbp5XxkzAvlXP6PKPTXhlQ6H+PIPqK9o0iUzH+tSZ4j5quaRn7La5wxrI0w+xLZ5h80I+UhDgu5XD04o6EP3VXwnNjSjQ9FoR+Ii2iORyMIptKdD+SPxn1/p8BLhsUAZo7srPwiwHvcF2weCOobq4t9DhxI03efjD+w3F6sIN4RY7p/r+KFHA57UK0Efcu+0uKeTQ6ln/8l6HFT52CrueCPJs9QxG+zXJh9MEo9/82XwapGxqsJaAB7hzLiEQ5UPfTlWOiMhJytmEz3QFdh1Xlnc9/kD5/8vrOssJNJX1ecJomXfNQatnlurNxByqJ67zBJuVhycTJ9nty5JzEuMTRq3fRN3CfXCddGTjOldYnylnRpH1hbRerTeW95yvXlNvcg6zyPbsPaAfwGTBlAwfJoMG1Vini7R9LF+d2hmpki5L5dMrTzRtfTXm6UGPc/QXZrnyzWI3+0XuUsrIHo4g3IqG0ykx1wJeAW93hWRZ8+ktzC16Ztztl0DpekcMLXjkSWXS4Z0o=
+    template:
+      - "`%{repository_slug}` \n*%{result}* build (<%{build_url}|#%{build_number}>) by %{author} for commit (<%{compare_url}|%{commit}>) on branch `%{branch}`."
+      - "Duration: *%{duration}*"
+      - "Message: %{message}"
