@@ -6,10 +6,7 @@ ENV NOTIFICATION_SERVICE_VERSION 1.0.0
 # Work directory
 WORKDIR /usr/src/app
 COPY . .
-# Install dependencies
-RUN yarn install
-# Build source-code
-RUN yarn build
 # Start service
-EXPOSE 3000
+ENV PORT 80
+EXPOSE 80
 CMD [ "yarn", "start:prod" ]
