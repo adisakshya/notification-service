@@ -37,7 +37,7 @@ export class NotificationController {
         }
         switch (eventData.MessageAttributes.eventType.Value) {
             case 'reminder:created':
-                await this.create(JSON.parse(eventData.Message));
+                await this.create(JSON.parse(eventData.Message).eventData);
                 break;
             default:
                 this.logger.error('Unknown event-type');
