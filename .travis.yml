@@ -47,6 +47,10 @@ jobs:
         - docker push $DOCKER_USER/$IMAGE_NAME:$VERSION-dev
     - stage: deploy-prod
       script:
+        # Install dependencies
+        - yarn install
+        # Build source
+        - yarn build
         # Build docker image
         - docker build -t $IMAGE_NAME .
         # List docker images
