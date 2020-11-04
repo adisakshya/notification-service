@@ -9,8 +9,7 @@ env:
     - IMAGE_NAME=notification-service
 
 stages:
-  - build
-  - test
+  - build-test
   - name: deploy-dev
     if: branch = development AND type = push AND fork = false
   - name: deploy-prod
@@ -24,20 +23,20 @@ before_script:
 
 jobs:
   include:
-    - stage: build
+    - stage: build-test
       script:
         # Install dependencies
         - yarn install
         # Build source
         - yarn build
-    - stage: test
-      script:
-        # Install dependencies
-        - yarn install
         # Run tests
         - yarn test --passWithNoTests
     - stage: deploy-dev
       script:
+        # Install dependencies
+        - yarn install
+        # Build source
+        - yarn build
         # Build docker image
         - docker build -t $IMAGE_NAME .
         # List docker images
@@ -48,6 +47,10 @@ jobs:
         - docker push $DOCKER_USER/$IMAGE_NAME:$VERSION-dev
     - stage: deploy-prod
       script:
+        # Install dependencies
+        - yarn install
+        # Build source
+        - yarn build
         # Build docker image
         - docker build -t $IMAGE_NAME .
         # List docker images

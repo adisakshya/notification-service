@@ -10,7 +10,7 @@ export class NotificationController {
     private readonly app = Consumer.create({
         queueUrl: process.env.NOTIFICATION_QUEUE_URL,
         handleMessage: async (message) => {
-            await this.handleReminderEvent(message);
+            await this.handleNotificationEvent(message);
         }
     })
     .on('error', (err) => {
@@ -28,23 +28,23 @@ export class NotificationController {
         this.logger.log(`SQS Consumer Running: ${this.app.isRunning}`);
     }
 
-    private async handleReminderEvent(message): Promise<void> {
-        this.logger.log('Received reminder event');
+    private async handleNotificationEvent(message): Promise<void> {
+        this.logger.log('Received notification event');
         const eventData = JSON.parse(message.Body);
         if (!eventData?.MessageAttributes?.eventType) {
             // Error
             return;
         }
         switch (eventData.MessageAttributes.eventType.Value) {
-            case 'reminder:created':
-                await this.create(JSON.parse(eventData.Message));
+            case 'notification:send':
+                await this.send(JSON.parse(eventData.Message).eventData);
                 break;
             default:
                 this.logger.error('Unknown event-type');
         }
     }
 
-    async create(reminder: Reminder): Promise<void> {
+    async send(reminder: Reminder): Promise<void> {
         this.logger.log(`Sending notification for user ${reminder.userId}`);
         const pushPayload = {
             notification: {
