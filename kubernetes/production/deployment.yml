@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-event-service
+  namespace: production
+  labels:
+    app: prod-event-service
+spec:
+  selector:
+    matchLabels:
+      app: prod-event-service
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: prod-event-service
+    spec:
+      containers:
+        - name: prod-event-service
+          image: adisakshya/event-service:1.0.0-prod
+          ports:
+            - containerPort: 80
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: prod-notification-db-secrets
+                  key: host
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: prod-notification-db-secrets
+                  key: name
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: prod-notification-db-secrets
+                  key: password
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: prod-notification-db-secrets
+                  key: user
+            - name: EVENT_STORE
+              valueFrom:
+                secretKeyRef:
+                  name: prod-event-store-secrets
+                  key: name
+            - name: EVENT_QUEUE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: prod-event-store-secrets
+                  key: event_queue
+            - name: EVENT_TOPIC_ARN
+              valueFrom:
+                secretKeyRef:
+                  name: prod-sns-topics-secrets
+                  key: event_topic
