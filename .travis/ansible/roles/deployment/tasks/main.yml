@@ -1,0 +1,78 @@
+# Make deployment in desired environment
+---
+# Check if the docker-image exists
+- name: Check if docker-image exists on dockerhub
+  docker_image:
+    name: '{{ docker_image_name }}:{{ docker_image_tag }}'
+    source: pull
+
+# Validate K8s deployment file and fail on errors
+- name: Validate deploment file
+  k8s:
+    kubeconfig: '{{ k8s_kubeconfig }}'
+    state: present
+    definition: "{{ lookup('template', '../kubernetes/deployment.yml') }}"
+    validate:
+      fail_on_error: yes
+
+# Validate K8s service file and fail on errors
+- name: Validate service file
+  k8s:
+    kubeconfig: '{{ k8s_kubeconfig }}'
+    state: present
+    definition: "{{ lookup('template', '../kubernetes/service.yml') }}"
+    validate:
+      fail_on_error: yes
+
+# Create deployment or patch an existing deployment
+- name: Create deployment
+  k8s:
+    definition: "{{ lookup('template', '../kubernetes/deployment.yml') }}"
+    kubeconfig: '{{ k8s_kubeconfig }}'
+    state: present
+
+## ToDo
+# - name: Check if the deployment is ready
+  # k8s_info:
+  #   kubeconfig: '{{ k8s_kubeconfig }}'
+  #   kind: Deployment
+  #   label_selectors: 
+  #     - app = dev-reminder-service
+  # register: output_info
+  # until: output_info.resources | json_query('[*].status.conditions[?reason==`NewReplicaSetAvailable`][].status') | select ('match','True') | list | length == 1
+  # delay: 2
+  # retries: 5
+
+# Create service or patch an existing service
+- name: Create service
+  k8s:
+    definition: "{{ lookup('template', '../kubernetes/service.yml') }}"
+    kubeconfig: '{{ k8s_kubeconfig }}'
+    state: present
+  register: reminder_service
+
+## ToDo
+# - name: Set the load balancer URL as a fact.
+#   set_fact:
+#     sample_api_lb_host: "{{ sample_api_svc['result']['status']['loadBalancer']['ingress'][0]['hostname'] }}"
+#   when: aws_environment | bool
+
+## ToDo
+# - name: Wait for load balancer to respond.
+#   uri:
+#     url: "http://{{ sample_api_lb_host }}"
+#   register: lb_result
+#   until: lb_result.status == 200
+#   retries: 60
+#   delay: 5
+#   when: aws_environment | bool
+
+## ToDo
+# - name: Get ELB information
+#   ec2_elb_info:
+#     region: "{{ aws_region }}"
+#     profile: "{{ aws_profile }}"
+#     names: "{{ sample_api_lb_host.split('-')[0] }}"
+#   register: elb_info
+#   when: aws_environment | bool
+...

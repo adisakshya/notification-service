@@ -1,0 +1,13 @@
+# Initiate local deployment
+---  
+- hosts: k8sCluster
+  gather_facts: false
+  vars_files:
+    # Use common variables
+    - "environments/common/main.yml"
+    # Use environment specific variables
+    - "environments/{{ env }}/main.yml"
+  roles:
+  - role: common
+  - role: deployment
+...

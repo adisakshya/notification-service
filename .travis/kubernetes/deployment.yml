@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{ env_prefix }}-{{ resource_name }}'
+  namespace: '{{ env }}'
+  labels:
+    app: '{{ env_prefix }}-{{ resource_name }}'
+spec:
+  selector:
+    matchLabels:
+      app: '{{ env_prefix }}-{{ resource_name }}'
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: '{{ env_prefix }}-{{ resource_name }}'
+    spec:
+      containers:
+        - name: '{{ env_prefix }}-{{ resource_name }}'
+          image: '{{ docker_image_name }}:{{ docker_image_tag }}'
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: NODE_ENV
+              value: '{{ env }}'
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: '{{ env_prefix }}-reminder-db-secrets'
+                  key: host
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: '{{ env_prefix }}-reminder-db-secrets'
+                  key: name
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: '{{ env_prefix }}-reminder-db-secrets'
+                  key: password
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: '{{ env_prefix }}-reminder-db-secrets'
+                  key: user
+            - name: EVENT_TOPIC_ARN
+              valueFrom:
+                secretKeyRef:
+                  name: '{{ env_prefix }}-sns-topics-secrets'
+                  key: event_topic

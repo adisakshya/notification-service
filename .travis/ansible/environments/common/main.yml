@@ -1,0 +1,23 @@
+# Common environment variables
+---
+# AWS Settings
+aws_environment: true
+aws_region: us-east-1
+aws_profile: default
+
+# This variable will be populated during playbook runs
+stack_outputs: {}
+
+# EKS Cluster settings
+eks_cluster_name: NotificationSystemCluster
+# eks_kubernetes_version: "1.16"
+
+# Kubernetes settings
+k8s_kubeconfig: ./config/kubeconfig
+k8s_no_log: true
+
+# Application details
+resource_name: notification-service
+
+# Docker image details
+docker_image_name: 'adisakshya/notification-service'
