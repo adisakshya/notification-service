@@ -37,4 +37,4 @@ lerna-debug.log*
 ormconfig.js
 
 # Kubernetes
-local-deployment.yml
+local/
