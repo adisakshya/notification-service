@@ -1,0 +1,20 @@
+# Make deployment in desired environment
+---
+# Ping host
+- name: Ping host
+  ping:
+
+# Show name and tag of the docker-image that is to be deployed
+- name: Show docker image information
+  debug:
+    msg: '{{ docker_image_name }}:{{ docker_image_tag }}'
+
+# Check if the required namespace exists
+- name: Verify k8s namespace
+  k8s:
+    kubeconfig: '{{ k8s_kubeconfig }}'
+    api_version: v1
+    kind: Namespace
+    name: '{{ env }}'
+    state: present
+...

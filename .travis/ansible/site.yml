@@ -1,0 +1,9 @@
+# Master playbook
+---
+  # Initiate deployment
+  - import_playbook: deployment.yml
+    when: deployment_type != 'local'
+
+  # Initiate local-deployment
+  - import_playbook: local-deployment.yml
+    when: deployment_type == 'local'

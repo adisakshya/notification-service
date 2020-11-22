@@ -1,0 +1,4 @@
+# Production environment variables
+---
+env_prefix: 'prod'
+docker_image_tag: '{{ version }}-prod'

@@ -1,0 +1,4 @@
+# Development environment variables
+---
+env_prefix: 'dev'
+docker_image_tag: '{{ version }}-dev'
