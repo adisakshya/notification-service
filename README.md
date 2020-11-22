@@ -4,4 +4,4 @@
 
 ## Architecture
 
-![Reminder Service Architecture](./assets/notification-service-architecture.png)
+![Notification Service Architecture](./assets/notification-service-architecture.png)
