@@ -4,4 +4,4 @@
 
 ## Architecture
 
-![Notification Service Architecture](./assets/notification-service-architecture.png)
+![Notification Service Architecture](https://raw.githubusercontent.com/adisakshya/notification-service/master/assets/notification-service-architecture.png)
