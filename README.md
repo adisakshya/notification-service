@@ -7,9 +7,14 @@
 
 ## Overview
 
-Before receiving reminder-notifications users device(s) must be registered with the service so that it can send the notification to the device(s). This microservice takes care of user-device registration. Clients can register the user device using an FCM token generated from the project's cloud-messaging system. If the FCM token is valid then the device is registered otherwise not.
+This microservice is responsible for sending notifications to user devices in response to an event coming from the [notification scheduler](https://github.com/adisakshya/custom-scheduler). This microservice also takes care of user-device registration and deregistration.
 
-Clients can also deregister the device using the provided device ID after successful registration, if the user wishes not to receive notifications on this device or on logout operation. These registration details are stored in PostgreSQL database. This service is also responsible for sending notifications to user devices in response to an event coming from the [notification scheduler](https://github.com/adisakshya/custom-scheduler).
+- Before receiving reminder-notifications users device(s) must be registered with the service so that it can send the notification to the device(s). 
+- Clients can register the user device using an FCM token generated from the project's cloud-messaging system. If the FCM token is valid then the device is registered otherwise not. 
+- Clients can also deregister the device using the provided device ID after successful registration, if the user wishes not to receive notifications on this device or on logout operation. 
+- These registration details are stored in PostgreSQL database.
+- The incoming notification-event from the [notification-scheduler]() contains all the information required to send the notification to the client.
+- This service continuously polls the notification-sqs-queue and send the notification to the clients.
 
 ## Operating Instructions
 
